@@ -3,7 +3,7 @@
 # Makefile for the AVRProg-compatible Bootloader
 #
 # based on the 
-# WinAVR Sample makefile written by Eric B. Weddington, Jörg Wunsch, et al.
+# WinAVR Sample makefile written by Eric B. Weddington, JÃ¶rg Wunsch, et al.
 # Released to the Public Domain
 # Please read the make user manual!
 #
@@ -49,7 +49,8 @@
 #DEVICE=COC
 #DEVICE=CCD
 #DEVICE=ARDCSM
-DEVICE=SCC
+#DEVICE=SCC
+DEVICE=DCC
 
 # end of user defined values
 
@@ -119,6 +120,13 @@ FUSES=-U lfuse:w:0xd6:m -U hfuse:w:0xda:m -U lock:w:0x2f:m
 endif
 
 ifeq ($(DEVICE), SCC)
+MCU=atmega1284p
+F_CPU=8000000
+BOOTSIZE=2048
+FUSES=-U lfuse:w:0xd6:m -U hfuse:w:0xda:m -U lock:w:0x2f:m
+endif
+
+ifeq ($(DEVICE), DCC)
 MCU=atmega1284p
 F_CPU=8000000
 BOOTSIZE=2048
