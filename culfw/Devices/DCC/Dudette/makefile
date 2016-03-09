@@ -596,8 +596,11 @@ endif
 #AVRDUDE_PROGRAMMER = jtagmkii
 #AVRDUDE_PORT = usb    # programmer connected to serial device
 
-AVRDUDE_PROGRAMMER = stk500v2
-AVRDUDE_PORT = /dev/ttyUSB0    # programmer connected to serial device
+#AVRDUDE_PROGRAMMER = stk500v2
+#AVRDUDE_PORT = /dev/ttyUSB0    # programmer connected to serial device
+
+AVRDUDE_PROGRAMMER = avr910
+AVRDUDE_PORT = /dev/cu.SLAB_USBtoUART # programmer connected to USB 
 
 AVRDUDE_WRITE_FLASH = -U flash:w:$(TARGET).hex
 #AVRDUDE_WRITE_EEPROM = -U eeprom:w:$(TARGET).eep
