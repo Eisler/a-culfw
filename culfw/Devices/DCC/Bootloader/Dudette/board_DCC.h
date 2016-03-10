@@ -1,4 +1,4 @@
-fndef _BOARD_COC_H
+#ifndef _BOARD_COC_H
 #define _BOARD_COC_H
 
 /*********************************/
@@ -16,11 +16,15 @@ fndef _BOARD_COC_H
 
 /* where is the conditional switch located? */
 
+/*  GPIO3 */
+
 #define BOOT_PORT               PORTC
 #define BOOT_DDR                DDRC
 #define BOOT_IN                 PINC
 #define BOOT_PIN                0
 #define BOOT_LOWACTIVE
+
+/*  GPIO2 */
 
 #define SWITCH_PORT             PORTC
 #define SWITCH_DDR              DDRC

@@ -52,6 +52,9 @@ typedef uint8_t pagebuf_t;
 #elif defined(__AVR_ATmega1284P__)
 #include "mega1284p.h"
 
+#elif defined(__AVR_ATmega1284__)
+#include "mega1284p.h"
+
 #elif defined(__AVR_ATmega128__)
 #include "mega128.h"
 

@@ -42,33 +42,42 @@ fi
 
 echo ""
 echo "The device will now be flashed"
-echo "KEEP THE MICRO BUTTON PRESSED AT DESIRED EXTENSION"
+if test ! -d /sys/class/gpio/gpio2; then echo 2 > /sys/class/gpio/export; fi
+echo out > /sys/class/gpio/gpio2/direction
+echo 0 > /sys/class/gpio/gpio2/value
+
+#if test ! -d /sys/class/gpio/gpio3; then echo 3 > /sys/class/gpio/export; fi
+#echo out > /sys/class/gpio/gpio3/direction
+#echo 0 > /sys/class/gpio/gpio3/value
+
+
+
 read -p "Continue (y/n)?" flashdevice
 
 if [ "$flashdevice" == "y" -o "$flashdevice" == "Y" -o "$flashdevice" == "j" -o "$flashdevice" == "J" ] ; then
   echo
-	echo calling radio frontends bootloader ...
-	echo
-	if test ! -d /sys/class/gpio/gpio17; then echo 17 > /sys/class/gpio/export; fi
-	echo out > /sys/class/gpio/gpio17/direction
-	echo 0 > /sys/class/gpio/gpio17/value
+        echo calling radio frontends bootloader ...
+        echo
+        if test ! -d /sys/class/gpio/gpio17; then echo 17 > /sys/class/gpio/export; fi
+        echo out > /sys/class/gpio/gpio17/direction
+        echo 0 > /sys/class/gpio/gpio17/value
 
-	if test ! -d /sys/class/gpio/gpio18; then echo 18 > /sys/class/gpio/export; fi
-	echo out > /sys/class/gpio/gpio18/direction
-	echo 0 > /sys/class/gpio/gpio18/value
+        if test ! -d /sys/class/gpio/gpio3; then echo 3 > /sys/class/gpio/export; fi
+        echo out > /sys/class/gpio/gpio3/direction
+        echo 0 > /sys/class/gpio/gpio3/value
 
-	echo 1 > /sys/class/gpio/gpio17/value
-	sleep 1
-	echo 1 > /sys/class/gpio/gpio18/value
-	echo in > /sys/class/gpio/gpio18/direction
-	echo 18 > /sys/class/gpio/unexport
+        echo 1 > /sys/class/gpio/gpio17/value
+        sleep 1
+        echo 1 > /sys/class/gpio/gpio3/value
+        echo in > /sys/class/gpio/gpio3/direction
+        echo 3 > /sys/class/gpio/unexport
    
   echo "Call now ${PROGRAMMER} -p${MCU} -cavr109 -P${port} -b${BAUD} -Uflash:w:./${FLASH_FILE}:i"
   ${PROGRAMMER} -p${MCU} -cavr109 -P${port} -b${BAUD} -Uflash:w:./${FLASH_FILE}:i
 
-  echo 0 > /sys/class/gpio/gpio17/value
-	sleep 1
-	echo 1 > /sys/class/gpio/gpio17/value
+        echo 0 > /sys/class/gpio/gpio17/value
+        sleep 1
+        echo 1 > /sys/class/gpio/gpio17/value
 
 else
   echo "Abort flash"

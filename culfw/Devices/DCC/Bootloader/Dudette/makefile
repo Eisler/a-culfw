@@ -127,7 +127,7 @@ FUSES=-U lfuse:w:0xd6:m -U hfuse:w:0xda:m -U lock:w:0x2f:m
 endif
 
 ifeq ($(DEVICE), DCC)
-MCU=atmega1284p
+MCU=atmega1284
 F_CPU=8000000
 BOOTSIZE=2048
 FUSES=-U lfuse:w:0xd6:m -U hfuse:w:0xda:m -U lock:w:0x2f:m
@@ -183,7 +183,8 @@ BOOTSIZE=2048
 FUSES=-U lfuse:w:0xbf:m -U hfuse:w:0xd8:m -U lock:w:0x2f:m
 endif
 
-GETMAC:="./get_mac.pl"
+#GETMAC:="./get_mac.pl"
+GETMAC="00:00:00:00:00:00"
 RSAPAIR:=$(shell ./gen_rsa_pair.pl 2>/dev/null)
 
 ################## BOOTLOADER ######################
@@ -382,6 +383,25 @@ endif
 endif
 
 ifeq ($(MCU), atmega1284p)
+BFD_MACH=avr5
+EE_MAC_ADDR = 4090
+EE_PUBL_KEY = 4058
+EE_PRIV_KEY = 4074
+ifeq ($(BOOTSIZE), 512)
+        MT_BOOTLOADER_ADDRESS = 0x1FC00
+endif
+ifeq ($(BOOTSIZE), 1024)
+        MT_BOOTLOADER_ADDRESS = 0x1F800
+endif
+ifeq ($(BOOTSIZE), 2048)
+        MT_BOOTLOADER_ADDRESS = 0x1F000
+endif
+ifeq ($(BOOTSIZE), 4096)
+        MT_BOOTLOADER_ADDRESS = 0x1E000
+endif
+endif
+
+ifeq ($(MCU), atmega1284)
 BFD_MACH=avr5
 EE_MAC_ADDR = 4090
 EE_PUBL_KEY = 4058

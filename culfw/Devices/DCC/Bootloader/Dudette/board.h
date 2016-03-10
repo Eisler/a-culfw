@@ -50,6 +50,10 @@
 #include "board_SCC.h"
 #endif
 
+#ifdef DCC
+#include "board_DCC.h"
+#endif
+
 // busware - CC1101-Clock-Display device for RPi
 // pull GPIO22 low during startup or reset by GPIO17
 #ifdef CCD

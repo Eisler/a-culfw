@@ -1,0 +1,285 @@
+   1               		.file	"ringbuf.c"
+   2               	__SP_H__ = 0x3e
+   3               	__SP_L__ = 0x3d
+   4               	__SREG__ = 0x3f
+   5               	__RAMPZ__ = 0x3b
+   6               	__tmp_reg__ = 0
+   7               	__zero_reg__ = 1
+   9               		.text
+  10               	.Ltext0:
+  98               	.global	ringbuf_init
+ 100               	ringbuf_init:
+   1:../lib/seriallink/ringbuf.c **** /*
+   2:../lib/seriallink/ringbuf.c ****  * Copyright (c) 2008, Swedish Institute of Computer Science.
+   3:../lib/seriallink/ringbuf.c ****  * All rights reserved.
+   4:../lib/seriallink/ringbuf.c ****  *
+   5:../lib/seriallink/ringbuf.c ****  * Redistribution and use in source and binary forms, with or without
+   6:../lib/seriallink/ringbuf.c ****  * modification, are permitted provided that the following conditions
+   7:../lib/seriallink/ringbuf.c ****  * are met:
+   8:../lib/seriallink/ringbuf.c ****  * 1. Redistributions of source code must retain the above copyright
+   9:../lib/seriallink/ringbuf.c ****  *    notice, this list of conditions and the following disclaimer.
+  10:../lib/seriallink/ringbuf.c ****  * 2. Redistributions in binary form must reproduce the above copyright
+  11:../lib/seriallink/ringbuf.c ****  *    notice, this list of conditions and the following disclaimer in the
+  12:../lib/seriallink/ringbuf.c ****  *    documentation and/or other materials provided with the distribution.
+  13:../lib/seriallink/ringbuf.c ****  * 3. Neither the name of the Institute nor the names of its contributors
+  14:../lib/seriallink/ringbuf.c ****  *    may be used to endorse or promote products derived from this software
+  15:../lib/seriallink/ringbuf.c ****  *    without specific prior written permission.
+  16:../lib/seriallink/ringbuf.c ****  *
+  17:../lib/seriallink/ringbuf.c ****  * THIS SOFTWARE IS PROVIDED BY THE INSTITUTE AND CONTRIBUTORS ``AS IS'' AND
+  18:../lib/seriallink/ringbuf.c ****  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  19:../lib/seriallink/ringbuf.c ****  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+  20:../lib/seriallink/ringbuf.c ****  * ARE DISCLAIMED.  IN NO EVENT SHALL THE INSTITUTE OR CONTRIBUTORS BE LIABLE
+  21:../lib/seriallink/ringbuf.c ****  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+  22:../lib/seriallink/ringbuf.c ****  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+  23:../lib/seriallink/ringbuf.c ****  * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+  24:../lib/seriallink/ringbuf.c ****  * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+  25:../lib/seriallink/ringbuf.c ****  * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+  26:../lib/seriallink/ringbuf.c ****  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+  27:../lib/seriallink/ringbuf.c ****  * SUCH DAMAGE.
+  28:../lib/seriallink/ringbuf.c ****  *
+  29:../lib/seriallink/ringbuf.c ****  * This file is part of the Contiki operating system.
+  30:../lib/seriallink/ringbuf.c ****  *
+  31:../lib/seriallink/ringbuf.c ****  * $Id: ringbuf.c,v 1.2 2010/06/15 13:31:22 nifi Exp $
+  32:../lib/seriallink/ringbuf.c ****  */
+  33:../lib/seriallink/ringbuf.c **** 
+  34:../lib/seriallink/ringbuf.c **** /**
+  35:../lib/seriallink/ringbuf.c ****  * \file
+  36:../lib/seriallink/ringbuf.c ****  *         Ring buffer library implementation
+  37:../lib/seriallink/ringbuf.c ****  * \author
+  38:../lib/seriallink/ringbuf.c ****  *         Adam Dunkels <adam@sics.se>
+  39:../lib/seriallink/ringbuf.c ****  */
+  40:../lib/seriallink/ringbuf.c **** 
+  41:../lib/seriallink/ringbuf.c **** #include "ringbuf.h"
+  42:../lib/seriallink/ringbuf.c **** /*---------------------------------------------------------------------------*/
+  43:../lib/seriallink/ringbuf.c **** void
+  44:../lib/seriallink/ringbuf.c **** ringbuf_init(struct ringbuf *r, uint8_t *dataptr, uint8_t size)
+  45:../lib/seriallink/ringbuf.c **** {
+ 102               	.LM0:
+ 103               	.LFBB1:
+ 104               	/* prologue: function */
+ 105               	/* frame size = 0 */
+ 106               	/* stack size = 0 */
+ 107               	.L__stack_usage = 0
+ 108 0000 FC01      		movw r30,r24
+  46:../lib/seriallink/ringbuf.c ****   r->data = dataptr;
+ 110               	.LM1:
+ 111 0002 7183      		std Z+1,r23
+ 112 0004 6083      		st Z,r22
+  47:../lib/seriallink/ringbuf.c ****   r->mask = size - 1;
+ 114               	.LM2:
+ 115 0006 4150      		subi r20,lo8(-(-1))
+ 116 0008 4283      		std Z+2,r20
+  48:../lib/seriallink/ringbuf.c ****   r->put_ptr = 0;
+ 118               	.LM3:
+ 119 000a 1382      		std Z+3,__zero_reg__
+  49:../lib/seriallink/ringbuf.c ****   r->get_ptr = 0;
+ 121               	.LM4:
+ 122 000c 1482      		std Z+4,__zero_reg__
+ 123 000e 0895      		ret
+ 125               	.Lscope1:
+ 129               	.global	ringbuf_put
+ 131               	ringbuf_put:
+  50:../lib/seriallink/ringbuf.c **** }
+  51:../lib/seriallink/ringbuf.c **** /*---------------------------------------------------------------------------*/
+  52:../lib/seriallink/ringbuf.c **** int
+  53:../lib/seriallink/ringbuf.c **** ringbuf_put(struct ringbuf *r, uint8_t c)
+  54:../lib/seriallink/ringbuf.c **** {
+ 133               	.LM5:
+ 134               	.LFBB2:
+ 135               	/* prologue: function */
+ 136               	/* frame size = 0 */
+ 137               	/* stack size = 0 */
+ 138               	.L__stack_usage = 0
+ 139 0010 FC01      		movw r30,r24
+  55:../lib/seriallink/ringbuf.c ****   /* Check if buffer is full. If it is full, return 0 to indicate that
+  56:../lib/seriallink/ringbuf.c ****      the element was not inserted into the buffer.
+  57:../lib/seriallink/ringbuf.c **** 
+  58:../lib/seriallink/ringbuf.c ****      XXX: there is a potential risk for a race condition here, because
+  59:../lib/seriallink/ringbuf.c ****      the ->get_ptr field may be written concurrently by the
+  60:../lib/seriallink/ringbuf.c ****      ringbuf_get() function. To avoid this, access to ->get_ptr must
+  61:../lib/seriallink/ringbuf.c ****      be atomic. We use an uint8_t type, which makes access atomic on
+  62:../lib/seriallink/ringbuf.c ****      most platforms, but C does not guarantee this.
+  63:../lib/seriallink/ringbuf.c ****   */
+  64:../lib/seriallink/ringbuf.c ****   if(((r->put_ptr - r->get_ptr) & r->mask) == r->mask) {
+ 141               	.LM6:
+ 142 0012 8381      		ldd r24,Z+3
+ 143 0014 2281      		ldd r18,Z+2
+ 144 0016 30E0      		ldi r19,0
+ 145 0018 90E0      		ldi r25,0
+ 146 001a 4481      		ldd r20,Z+4
+ 147 001c DC01      		movw r26,r24
+ 148 001e A41B      		sub r26,r20
+ 149 0020 B109      		sbc r27,__zero_reg__
+ 150 0022 AD01      		movw r20,r26
+ 151 0024 4223      		and r20,r18
+ 152 0026 5323      		and r21,r19
+ 153 0028 4217      		cp r20,r18
+ 154 002a 5307      		cpc r21,r19
+ 155 002c 01F0      		breq .L4
+  65:../lib/seriallink/ringbuf.c ****     return 0;
+  66:../lib/seriallink/ringbuf.c ****   }
+  67:../lib/seriallink/ringbuf.c ****   r->data[r->put_ptr] = c;
+ 157               	.LM7:
+ 158 002e 2081      		ld r18,Z
+ 159 0030 3181      		ldd r19,Z+1
+ 160 0032 D901      		movw r26,r18
+ 161 0034 A80F      		add r26,r24
+ 162 0036 B91F      		adc r27,r25
+ 163 0038 6C93      		st X,r22
+  68:../lib/seriallink/ringbuf.c ****   r->put_ptr = (r->put_ptr + 1) & r->mask;
+ 165               	.LM8:
+ 166 003a 8381      		ldd r24,Z+3
+ 167 003c 8F5F      		subi r24,lo8(-(1))
+ 168 003e 9281      		ldd r25,Z+2
+ 169 0040 8923      		and r24,r25
+ 170 0042 8383      		std Z+3,r24
+  69:../lib/seriallink/ringbuf.c ****   return 1;
+ 172               	.LM9:
+ 173 0044 81E0      		ldi r24,lo8(1)
+ 174 0046 90E0      		ldi r25,0
+ 175 0048 0895      		ret
+ 176               	.L4:
+  65:../lib/seriallink/ringbuf.c ****     return 0;
+ 178               	.LM10:
+ 179 004a 80E0      		ldi r24,0
+ 180 004c 90E0      		ldi r25,0
+  70:../lib/seriallink/ringbuf.c **** }
+ 182               	.LM11:
+ 183 004e 0895      		ret
+ 185               	.Lscope2:
+ 188               	.global	ringbuf_get
+ 190               	ringbuf_get:
+  71:../lib/seriallink/ringbuf.c **** /*---------------------------------------------------------------------------*/
+  72:../lib/seriallink/ringbuf.c **** int
+  73:../lib/seriallink/ringbuf.c **** ringbuf_get(struct ringbuf *r)
+  74:../lib/seriallink/ringbuf.c **** {
+ 192               	.LM12:
+ 193               	.LFBB3:
+ 194               	/* prologue: function */
+ 195               	/* frame size = 0 */
+ 196               	/* stack size = 0 */
+ 197               	.L__stack_usage = 0
+ 198 0050 FC01      		movw r30,r24
+  75:../lib/seriallink/ringbuf.c ****   uint8_t c;
+  76:../lib/seriallink/ringbuf.c ****   
+  77:../lib/seriallink/ringbuf.c ****   /* Check if there are bytes in the buffer. If so, we return the
+  78:../lib/seriallink/ringbuf.c ****      first one and increase the pointer. If there are no bytes left, we
+  79:../lib/seriallink/ringbuf.c ****      return -1.
+  80:../lib/seriallink/ringbuf.c **** 
+  81:../lib/seriallink/ringbuf.c ****      XXX: there is a potential risk for a race condition here, because
+  82:../lib/seriallink/ringbuf.c ****      the ->put_ptr field may be written concurrently by the
+  83:../lib/seriallink/ringbuf.c ****      ringbuf_put() function. To avoid this, access to ->get_ptr must
+  84:../lib/seriallink/ringbuf.c ****      be atomic. We use an uint8_t type, which makes access atomic on
+  85:../lib/seriallink/ringbuf.c ****      most platforms, but C does not guarantee this.
+  86:../lib/seriallink/ringbuf.c ****   */
+  87:../lib/seriallink/ringbuf.c ****   if(((r->put_ptr - r->get_ptr) & r->mask) > 0) {
+ 200               	.LM13:
+ 201 0052 3481      		ldd r19,Z+4
+ 202 0054 2281      		ldd r18,Z+2
+ 203 0056 8381      		ldd r24,Z+3
+ 204 0058 90E0      		ldi r25,0
+ 205 005a 432F      		mov r20,r19
+ 206 005c 50E0      		ldi r21,0
+ 207 005e 841B      		sub r24,r20
+ 208 0060 950B      		sbc r25,r21
+ 209 0062 622F      		mov r22,r18
+ 210 0064 70E0      		ldi r23,0
+ 211 0066 8623      		and r24,r22
+ 212 0068 9723      		and r25,r23
+ 213 006a 892B      		or r24,r25
+ 214 006c 01F0      		breq .L8
+  88:../lib/seriallink/ringbuf.c ****     c = r->data[r->get_ptr];
+ 216               	.LM14:
+ 217 006e 8081      		ld r24,Z
+ 218 0070 9181      		ldd r25,Z+1
+ 219 0072 DC01      		movw r26,r24
+ 220 0074 A40F      		add r26,r20
+ 221 0076 B51F      		adc r27,r21
+ 222 0078 8C91      		ld r24,X
+  89:../lib/seriallink/ringbuf.c ****     r->get_ptr = (r->get_ptr + 1) & r->mask;
+ 224               	.LM15:
+ 225 007a 3F5F      		subi r19,lo8(-(1))
+ 226 007c 2323      		and r18,r19
+ 227 007e 2483      		std Z+4,r18
+  90:../lib/seriallink/ringbuf.c ****     return c;
+ 229               	.LM16:
+ 230 0080 90E0      		ldi r25,0
+ 231 0082 0895      		ret
+ 232               	.L8:
+  91:../lib/seriallink/ringbuf.c ****   } else {
+  92:../lib/seriallink/ringbuf.c ****     return -1;
+ 234               	.LM17:
+ 235 0084 8FEF      		ldi r24,lo8(-1)
+ 236 0086 9FEF      		ldi r25,lo8(-1)
+  93:../lib/seriallink/ringbuf.c ****   }
+  94:../lib/seriallink/ringbuf.c **** }
+ 238               	.LM18:
+ 239 0088 0895      		ret
+ 244               	.Lscope3:
+ 247               	.global	ringbuf_size
+ 249               	ringbuf_size:
+  95:../lib/seriallink/ringbuf.c **** /*---------------------------------------------------------------------------*/
+  96:../lib/seriallink/ringbuf.c **** int
+  97:../lib/seriallink/ringbuf.c **** ringbuf_size(struct ringbuf *r)
+  98:../lib/seriallink/ringbuf.c **** {
+ 251               	.LM19:
+ 252               	.LFBB4:
+ 253               	/* prologue: function */
+ 254               	/* frame size = 0 */
+ 255               	/* stack size = 0 */
+ 256               	.L__stack_usage = 0
+  99:../lib/seriallink/ringbuf.c ****   return r->mask + 1;
+ 258               	.LM20:
+ 259 008a FC01      		movw r30,r24
+ 260 008c 8281      		ldd r24,Z+2
+ 261 008e 90E0      		ldi r25,0
+ 100:../lib/seriallink/ringbuf.c **** }
+ 263               	.LM21:
+ 264 0090 0196      		adiw r24,1
+ 265 0092 0895      		ret
+ 267               	.Lscope4:
+ 270               	.global	ringbuf_elements
+ 272               	ringbuf_elements:
+ 101:../lib/seriallink/ringbuf.c **** /*---------------------------------------------------------------------------*/
+ 102:../lib/seriallink/ringbuf.c **** int
+ 103:../lib/seriallink/ringbuf.c **** ringbuf_elements(struct ringbuf *r)
+ 104:../lib/seriallink/ringbuf.c **** {
+ 274               	.LM22:
+ 275               	.LFBB5:
+ 276               	/* prologue: function */
+ 277               	/* frame size = 0 */
+ 278               	/* stack size = 0 */
+ 279               	.L__stack_usage = 0
+ 280 0094 FC01      		movw r30,r24
+ 105:../lib/seriallink/ringbuf.c ****   return (r->put_ptr - r->get_ptr) & r->mask;
+ 282               	.LM23:
+ 283 0096 2381      		ldd r18,Z+3
+ 284 0098 30E0      		ldi r19,0
+ 285 009a 8481      		ldd r24,Z+4
+ 286 009c 281B      		sub r18,r24
+ 287 009e 3109      		sbc r19,__zero_reg__
+ 288 00a0 8281      		ldd r24,Z+2
+ 289 00a2 90E0      		ldi r25,0
+ 106:../lib/seriallink/ringbuf.c **** }
+ 291               	.LM24:
+ 292 00a4 8223      		and r24,r18
+ 293 00a6 9323      		and r25,r19
+ 294 00a8 0895      		ret
+ 296               	.Lscope5:
+ 298               	.Letext0:
+ 299               		.ident	"GCC: (GNU) 4.9.1"
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 ringbuf.c
+/var/folders/y2/7gk42xnj5s1461shrm4p50q40000gn/T//ccdZwdUy.s:2      *ABS*:000000000000003e __SP_H__
+/var/folders/y2/7gk42xnj5s1461shrm4p50q40000gn/T//ccdZwdUy.s:3      *ABS*:000000000000003d __SP_L__
+/var/folders/y2/7gk42xnj5s1461shrm4p50q40000gn/T//ccdZwdUy.s:4      *ABS*:000000000000003f __SREG__
+/var/folders/y2/7gk42xnj5s1461shrm4p50q40000gn/T//ccdZwdUy.s:5      *ABS*:000000000000003b __RAMPZ__
+/var/folders/y2/7gk42xnj5s1461shrm4p50q40000gn/T//ccdZwdUy.s:6      *ABS*:0000000000000000 __tmp_reg__
+/var/folders/y2/7gk42xnj5s1461shrm4p50q40000gn/T//ccdZwdUy.s:7      *ABS*:0000000000000001 __zero_reg__
+/var/folders/y2/7gk42xnj5s1461shrm4p50q40000gn/T//ccdZwdUy.s:100    .text:0000000000000000 ringbuf_init
+/var/folders/y2/7gk42xnj5s1461shrm4p50q40000gn/T//ccdZwdUy.s:131    .text:0000000000000010 ringbuf_put
+/var/folders/y2/7gk42xnj5s1461shrm4p50q40000gn/T//ccdZwdUy.s:190    .text:0000000000000050 ringbuf_get
+/var/folders/y2/7gk42xnj5s1461shrm4p50q40000gn/T//ccdZwdUy.s:249    .text:000000000000008a ringbuf_size
+/var/folders/y2/7gk42xnj5s1461shrm4p50q40000gn/T//ccdZwdUy.s:272    .text:0000000000000094 ringbuf_elements
+
+NO UNDEFINED SYMBOLS
