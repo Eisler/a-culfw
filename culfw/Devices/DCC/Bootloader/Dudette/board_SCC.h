@@ -1,5 +1,5 @@
-#ifndef _BOARD_DCC_H
-#define _BOARD_DCC_H
+#ifndef _BOARD_SCC_H
+#define _BOARD_SCC_H
 
 /*********************************/
 /* Will I listen on serial line? */
