@@ -128,7 +128,7 @@ endif
 
 ifeq ($(DEVICE), DCC)
 MCU=atmega1284
-F_CPU=8000000
+F_CPU=10000000
 BOOTSIZE=2048
 FUSES=-U lfuse:w:0xd6:m -U hfuse:w:0xda:m -U lock:w:0x2f:m
 endif
