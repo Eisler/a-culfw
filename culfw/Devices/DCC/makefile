@@ -1,6 +1,6 @@
 MCU = atmega1284p
 BOARD  =
-F_CPU = 10000000
+F_CPU = 8000000
 FORMAT = ihex
 TARGET = DCC
 OBJDIR = .
