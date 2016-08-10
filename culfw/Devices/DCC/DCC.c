@@ -128,6 +128,9 @@ main(void)
 
   led_init();
   LED_ON();
+  
+  ANTSEL868_EXTERN();
+  ANTSEL433_EXTERN();
 
   MARK433_PORT |= _BV( MARK433_BIT );
   MARK915_PORT |= _BV( MARK915_BIT );
