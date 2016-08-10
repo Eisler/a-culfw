@@ -83,6 +83,14 @@
 #define MARK915_PIN             PINA    
 #define MARK915_BIT             6
 
+#define ANTSEL868_PORT          PORTD
+#define ANTSEL868_PIN           PIND
+#define ANTSEL868_BIT           5
+
+#define ANTSEL433_PORT          PORTC
+#define ANTSEL433_PIN           PINC
+#define ANTSEL433_BIT           4
+
 #define BOARD_ID_STR            "CSM868"
 #define BOARD_ID_STR433         "CSM433"
 #define BOARD_ID_STR915         "CSM915"
